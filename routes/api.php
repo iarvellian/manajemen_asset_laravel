@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\authController;
+use App\Http\Controllers\refDivisiController;
+use App\Http\Controllers\refKelasAsetController;
+use App\Http\Controllers\refKodeProjekController;
+use App\Http\Controllers\refLokasiController;
+use App\Http\Controllers\refRoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +20,68 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Authentication routes
+Route::post('/register', [authController::class, 'register']);
+Route::post('/login', [authController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+
+    // Route logout
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Route profile
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [AuthController::class, 'profile']);
+        Route::post('/', [AuthController::class, 'updateProfile']);
+    });
+
+    // Route role
+    Route::prefix('role')->group(function (){
+        Route::get('/', [refRoleController::class, 'index']);
+        Route::post('/', [refRoleController::class, 'store']);
+        Route::get('/{id_role}', [refRoleController::class, 'show']);
+        Route::put('/{id_role}', [refRoleController::class, 'update']);
+        Route::delete('/{id_role}', [refRoleController::class, 'destroy']);
+    });
+    
+
+    // Route divisi
+    Route::prefix('divisi')->group(function (){
+        Route::get('/', [refDivisiController::class, 'index']);
+        Route::post('/', [refDivisiController::class, 'store']);
+        Route::get('/{id_divisi}', [refDivisiController::class, 'show']);
+        Route::put('/{id_divisi}', [refDivisiController::class, 'update']);
+        Route::delete('/{id_divisi}', [refDivisiController::class, 'destroy']);
+    });
+
+    // Route kelas aset
+    Route::prefix('kelas_aset')->group(function (){
+        Route::get('/', [refKelasAsetController::class, 'index']);
+        Route::post('', [refKelasAsetController::class, 'store']);
+        Route::get('/{id_kelas_aset}', [refKelasAsetController::class, 'show']);
+        Route::put('/{id_kelas_aset}', [refKelasAsetController::class, 'update']);
+        Route::delete('/{id_kelas_aset}', [refKelasAsetController::class, 'destroy']);
+    });
+
+    // Route kode projek
+    Route::prefix('kode_projek')->group(function (){
+        Route::get('/', [refKodeProjekController::class, 'index']);
+        Route::post('/', [refKodeProjekController::class, 'store']);
+        Route::get('/{id_kode_projek}', [refKodeProjekController::class, 'show']);
+        Route::put('/{id_kode_projek}', [refKodeProjekController::class, 'update']);
+        Route::delete('/{id_kode_projek}', [refKodeProjekController::class, 'destroy']);
+    });
+
+    // Route lokasi
+    Route::prefix('lokasi')->group(function (){
+        Route::get('/', [refLokasiController::class, 'index']);
+        Route::post('/', [refLokasiController::class, 'store']);
+        Route::get('/{id_lokasi}', [refLokasiController::class, 'show']);
+        Route::put('/{id_lokasi}', [refLokasiController::class, 'update']);
+        Route::delete('/{id_lokasi}', [refLokasiController::class, 'destroy']);
+    });
 });
