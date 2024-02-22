@@ -6,8 +6,6 @@ use App\Models\refKodeProjek;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class refKodeProjekController extends Controller
 {
@@ -45,21 +43,7 @@ class refKodeProjekController extends Controller
             return response()->json($validate->errors(), 400);
         }
 
-        $last = DB::table('ref_kode_projek')->latest()->first();
-        if($last == null){
-            $count = 1;
-        }else{
-            $count = ((int)Str::substr($last->id_kode_projek, 2, 3)) + 1;
-        }
-
-        if($count < 10){
-            $id = '0'.$count;
-        }else if($count >= 10){
-            $id = $count;
-        }
-
         $ref_kode_projek = refKodeProjek::create([
-            'id_kode_projek' => 'KP'.$id,
             'nama_kode_projek' => $request->nama_kode_projek,
         ]);
 

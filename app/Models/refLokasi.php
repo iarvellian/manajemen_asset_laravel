@@ -10,7 +10,6 @@ class refLokasi extends Model
     use HasFactory;
 
     protected $primaryKey = 'id_lokasi';
-    protected $keyType = 'string';
     protected $table = 'ref_lokasi';
     protected $fillable = [
         'id_lokasi',

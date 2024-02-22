@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\assetController;
 use App\Http\Controllers\authController;
 use App\Http\Controllers\refDivisiController;
 use App\Http\Controllers\refKelasAsetController;
 use App\Http\Controllers\refKodeProjekController;
 use App\Http\Controllers\refLokasiController;
 use App\Http\Controllers\refRoleController;
+use App\Http\Controllers\transaksiAssetKeluarController;
+use App\Http\Controllers\transaksiAssetMasukController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,7 +50,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id_role}', [refRoleController::class, 'update']);
         Route::delete('/{id_role}', [refRoleController::class, 'destroy']);
     });
-    
 
     // Route divisi
     Route::prefix('divisi')->group(function (){
@@ -83,5 +85,32 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id_lokasi}', [refLokasiController::class, 'show']);
         Route::put('/{id_lokasi}', [refLokasiController::class, 'update']);
         Route::delete('/{id_lokasi}', [refLokasiController::class, 'destroy']);
+    });
+
+    // Route asset
+    Route::prefix('asset')->group(function (){
+        Route::get('/', [assetController::class, 'index']);
+        Route::post('/', [assetController::class, 'store']);
+        Route::get('/{id_asset}', [assetController::class, 'show']);
+        Route::put('/{id_asset}', [assetController::class, 'update']);
+        Route::delete('/{id_asset}', [assetController::class, 'destroy']);
+    });
+
+    // Route asset keluar
+    Route::prefix('assetkeluar')->group(function (){
+        Route::get('/', [transaksiAssetKeluarController::class, 'index']);
+        Route::post('/', [transaksiAssetKeluarController::class, 'store']);
+        Route::get('/{id_asset_keluar}', [transaksiAssetKeluarController::class, 'show']);
+        Route::put('/{id_asset_keluar}', [transaksiAssetKeluarController::class, 'update']);
+        Route::delete('/{id_asset_keluar}', [transaksiAssetKeluarController::class, 'destroy']);
+    });
+
+    // Route asset masuk
+    Route::prefix('assetmasuk')->group(function (){
+        Route::get('/', [transaksiAssetMasukController::class, 'index']);
+        Route::post('/', [transaksiAssetMasukController::class, 'store']);
+        Route::get('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'show']);
+        Route::put('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'update']);
+        Route::delete('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'destroy']);
     });
 });

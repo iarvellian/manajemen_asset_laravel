@@ -10,7 +10,6 @@ class refDivisi extends Model
     use HasFactory;
 
     protected $primaryKey = 'id_divisi';
-    protected $keyType = 'string';
     protected $table = 'ref_divisi';
     protected $fillable = [
         'id_divisi',

@@ -6,8 +6,6 @@ use App\Models\refDivisi;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 
 class refDivisiController extends Controller
@@ -47,21 +45,7 @@ class refDivisiController extends Controller
             return response()->json($validate->errors(), 400);
         }
 
-        $last = DB::table('ref_divisi')->latest()->first();
-        if($last == null){
-            $count = 1;
-        }else{
-            $count = ((int)Str::substr($last->id_divisi, 3, 3)) + 1;
-        }
-
-        if($count < 10){
-            $id = '0'.$count;
-        }else if($count >= 10){
-            $id = $count;
-        }
-
         $ref_divisi = refDivisi::create([
-            'id_divisi' => 'DIV'.$id,
             'nama_divisi' => $request->nama_divisi,
         ]);
 

@@ -10,7 +10,6 @@ class refKodeProjek extends Model
     use HasFactory;
 
     protected $primaryKey = 'id_kode_projek';
-    protected $keyType = 'string';
     protected $table = 'ref_kode_projek';
     protected $fillable = [
         'id_kode_projek',

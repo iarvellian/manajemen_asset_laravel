@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ref_divisi', function (Blueprint $table) {
-            $table->bigIncrements('id_divisi');
-            $table->string('nama_divisi');
+        Schema::create('transaksi_asset_masuk', function (Blueprint $table) {
+            $table->bigIncrements('id_transaksi_masuk');
+            $table->bigInteger('id_asset')->unsigned()->index();
+            $table->bigInteger('id')->unsigned()->index();
+            $table->date('tgl_masuk');
+            $table->string('keterangan');
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ref_divisi');
+        Schema::dropIfExists('transaksi_asset_masuk');
     }
 };

@@ -6,8 +6,6 @@ use App\Models\refLokasi;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class refLokasiController extends Controller
 {
@@ -46,21 +44,7 @@ class refLokasiController extends Controller
             return response()->json($validate->errors(), 400);
         }
 
-        $last = DB::table('ref_lokasi')->latest()->first();
-        if($last == null){
-            $count = 1;
-        }else{
-            $count = ((int)Str::substr($last->id_lokasi, 3, 3)) + 1;
-        }
-
-        if($count < 10){
-            $id = '00'.$count;
-        }else if($count >= 10 && $count < 100){
-            $id = '0'.$count;
-        }
-
         $ref_lokasi = refLokasi::create([
-            'id_lokasi' => 'LOK'.$id,
             'nama_lokasi' => $request->nama_lokasi,
         ]);
 

@@ -14,6 +14,7 @@ class authController extends Controller
         try {
             $validate = Validator::make($request->all(), [
                 'nama_pegawai' => 'required|string|max:255',
+                'jabatan' => 'required|string',
                 'username' => 'required|string|max:255|unique:users',
                 'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])/', 'confirmed'],
                 'id_role' => 'required|exists:ref_role,id_role',
@@ -25,6 +26,7 @@ class authController extends Controller
 
             $user = User::create([
                 'nama_pegawai' => $request->nama_pegawai,
+                'jabatan' => $request->jabatan,
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'id_role' => $request->id_role,
@@ -97,6 +99,7 @@ class authController extends Controller
         try {
             $validate = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
+                'jabatan' => 'required|string',
                 'username' => 'required|string|max:255|unique:users,username,'.$request->user()->id,
                 'password' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])/', 'confirmed'],
             ]);
@@ -105,7 +108,7 @@ class authController extends Controller
                 return response()->json($validate->errors(), 400);       
             }
 
-            $userData = $request->only('name', 'username');
+            $userData = $request->only('name', 'jabatan', 'username');
 
             if ($request->filled('password')) {
                 $userData['password'] = Hash::make($request->password);
