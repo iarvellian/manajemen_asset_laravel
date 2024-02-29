@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigInteger('id_lokasi')->unsigned()->index();
             $table->bigInteger('id_kelas_aset')->unsigned()->index();
             $table->bigInteger('id_kode_projek')->unsigned()->index();
-            $table->string('thn_perolehan');
+            $table->year('thn_perolehan');
             $table->string('cost_center');
             $table->string('ue');
             $table->string('kode_aset');

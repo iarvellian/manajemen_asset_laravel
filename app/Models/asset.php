@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\ChangeLoggingTrait;
 
 class asset extends Model
 {
-    use HasFactory;
+    use HasFactory, ChangeLoggingTrait;
 
     protected $primaryKey = 'id_asset';
     protected $table = 'asset';

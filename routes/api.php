@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\assetController;
 use App\Http\Controllers\authController;
+use App\Http\Controllers\logAktivitasController;
 use App\Http\Controllers\refDivisiController;
 use App\Http\Controllers\refKelasAsetController;
 use App\Http\Controllers\refKodeProjekController;
@@ -31,7 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
 
     // Route logout
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -113,4 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'update']);
         Route::delete('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'destroy']);
     });
+
+    // Route log aktivitas
+    Route::get('/log_aktivitas', [logAktivitasController::class, 'index']);
 });
