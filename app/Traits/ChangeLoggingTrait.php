@@ -23,27 +23,41 @@ trait ChangeLoggingTrait
 
     protected static function createChangeLog($model, $action)
     {
-        $jsonData = $model->toJson();
-        $arrayJsonData = json_decode($jsonData, true);
-        $arrayOriginalData = "";
+        // Convert model attributes to an array
+        $jsonData = $model->toArray();
 
-        if (is_array($arrayJsonData)) {
-            $arrayJsonData = json_encode($arrayJsonData);
+        // Retrieve original data if available
+        $originalData = ($action !== 'created') ? $model->getOriginal() : null;
+
+        // Format created_at and updated_at if they exist
+        if (isset($jsonData['created_at'])) {
+            $jsonData['created_at'] = \Carbon\Carbon::parse($jsonData['created_at'])->format('d M Y');
         }
 
-        if (count($model->getOriginal()) > 0) {
-            $originalData = $model->getOriginal();
+        if (isset($jsonData['updated_at'])) {
+            $jsonData['updated_at'] = \Carbon\Carbon::parse($jsonData['updated_at'])->format('d M Y');
+        }
 
-            if (is_array($originalData)) {
-                $arrayOriginalData = json_encode($originalData);
+        // Format created_at and updated_at in original data if they exist
+        if ($originalData !== null) {
+            if (isset($originalData['created_at'])) {
+                $originalData['created_at'] = \Carbon\Carbon::parse($originalData['created_at'])->format('d M Y');
+            }
+
+            if (isset($originalData['updated_at'])) {
+                $originalData['updated_at'] = \Carbon\Carbon::parse($originalData['updated_at'])->format('d M Y');
             }
         }
+
+        // Convert arrays to JSON strings
+        $jsonData = json_encode($jsonData);
+        $arrayOriginalData = json_encode($originalData);
 
         ChangeLogs::create([
             'nama_tabel' => $model->getTable(),
             'aksi' => $action,
-            'data_lama' => ($action === 'deleted') ? $arrayJsonData : $arrayOriginalData,
-            'data_baru' => ($action === 'created' || $action === 'updated') ? $arrayJsonData : null,
+            'data_lama' => ($action === 'deleted') ? $jsonData : $arrayOriginalData,
+            'data_baru' => ($action === 'created' || $action === 'updated') ? $jsonData : null,
             'user_id' => auth()->id(),
         ]);
     }

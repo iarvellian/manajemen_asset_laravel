@@ -85,6 +85,9 @@ class authController extends Controller
     public function profile(Request $request)
     {
         try {
+            $user = $request->user();
+            $user->load('role'); // Eager load the role relationship
+
             return response()->json($request->user());
         } catch (\Throwable $th) {
             return response()->json([

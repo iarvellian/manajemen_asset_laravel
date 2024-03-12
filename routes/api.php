@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\assetController;
 use App\Http\Controllers\authController;
-use App\Http\Controllers\logAktivitasController;
+use App\Http\Controllers\userController;
 use App\Http\Controllers\refDivisiController;
 use App\Http\Controllers\refKelasAsetController;
 use App\Http\Controllers\refKodeProjekController;
@@ -41,6 +41,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [AuthController::class, 'profile']);
         Route::post('/', [AuthController::class, 'updateProfile']);
     });
+
+    // Route log aktivitas
+    Route::get('/log_aktivitas', [userController::class, 'logActivity']);
+
+    // Route users
+    Route::get('/users', [userController::class, 'getAllUsers']);
 
     // Route role
     Route::prefix('role')->group(function (){
@@ -114,6 +120,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'destroy']);
     });
 
-    // Route log aktivitas
-    Route::get('/log_aktivitas', [logAktivitasController::class, 'index']);
 });

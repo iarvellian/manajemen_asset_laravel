@@ -17,4 +17,19 @@ class changeLogs extends Model
         'data_baru',
         'user_id',
     ];
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d M Y');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d M Y');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
