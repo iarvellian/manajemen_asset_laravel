@@ -12,6 +12,11 @@ class authController extends Controller
     public function register(Request $request)
     {
         try {
+            $user = $request->user();
+            if (!$user || $user->id_role !== 1) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
             $validate = Validator::make($request->all(), [
                 'nama_pegawai' => 'required|string|max:255',
                 'jabatan' => 'required|string',

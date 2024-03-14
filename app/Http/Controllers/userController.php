@@ -81,4 +81,26 @@ class userController extends Controller
             ], 500);
         }
     }
+
+    public function deleteUser($id)
+    {
+        try {
+            $user = Auth::user();
+            if (!$user || $user->id_role !== 1) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            $usetarget = User::findOrFail($id);
+            $usetarget->delete();
+
+            return response()->json([
+                'message' => 'User deleted successfully'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Failed to delete user',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 }

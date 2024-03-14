@@ -25,13 +25,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Authentication routes
-Route::post('/register', [authController::class, 'register']);
 Route::post('/login', [authController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+    // Route registered user
+    Route::post('/register', [authController::class, 'register']);
 
     // Route logout
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -46,7 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/log_aktivitas', [userController::class, 'logActivity']);
 
     // Route users
-    Route::get('/users', [userController::class, 'getAllUsers']);
+    Route::prefix('users')->group(function (){
+        Route::get('/', [userController::class, 'getAllUsers']);
+        Route::delete('/{id}', [userController::class, 'deleteUser']);
+    });
 
     // Route role
     Route::prefix('role')->group(function (){
