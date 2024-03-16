@@ -48,7 +48,7 @@ class userController extends Controller
 
             return response([
                 'message' => 'Empty',
-                'data' => null
+                'data' => []
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([

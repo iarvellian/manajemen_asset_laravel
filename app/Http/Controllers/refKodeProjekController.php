@@ -25,8 +25,8 @@ class refKodeProjekController extends Controller
 
         return response([
             'message' => 'Empty',
-            'data' => null
-        ], 400);
+            'data' => []
+        ], 200);
     }
 
     /**

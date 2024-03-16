@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\assetController;
 use App\Http\Controllers\authController;
+use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\userController;
 use App\Http\Controllers\refDivisiController;
 use App\Http\Controllers\refKelasAsetController;
@@ -125,4 +126,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'destroy']);
     });
 
+    // Route dashboard
+    Route::get('/count_role', [dashboardController::class, 'getRoleCount']);
+    Route::get('/count_user', [dashboardController::class, 'getUserCount']);
+    Route::get('/count_lokasi', [dashboardController::class, 'getLokasiCount']);
+    Route::get('/count_kelas_aset', [dashboardController::class, 'getKelasAsetCount']);
+    Route::get('/count_kode_projek', [dashboardController::class, 'getKodeProjekCount']);
+    Route::get('/count_divisi', [dashboardController::class, 'getDivisiCount']);
 });
