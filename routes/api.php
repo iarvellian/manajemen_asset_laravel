@@ -133,4 +133,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/count_kelas_aset', [dashboardController::class, 'getKelasAsetCount']);
     Route::get('/count_kode_projek', [dashboardController::class, 'getKodeProjekCount']);
     Route::get('/count_divisi', [dashboardController::class, 'getDivisiCount']);
+    Route::get('/count_asset', [dashboardController::class, 'getAssetCount']);
 });

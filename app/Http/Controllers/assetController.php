@@ -14,7 +14,7 @@ class assetController extends Controller
      */
     public function index()
     {
-        $assets = asset::all();
+        $assets = asset::with('divisi', 'kodeProjek', 'kelasAset', 'lokasi')->get();
 
         if(count($assets) > 0){
             return response([
@@ -41,7 +41,7 @@ class assetController extends Controller
             'id_kelas_aset' => 'required|exists:ref_kelas_aset,id_kelas_aset',
             'id_kode_projek' => 'required|exists:ref_kode_projek,id_kode_projek',
             'is_luar_kota' => 'required',
-            'thn_perolehan' => 'required',
+            'thn_perolehan' => 'required|digits:4|integer|min:1900|max:9999',
             'cost_center' => 'required',
             'ue' => 'required',
             'kode_aset' => 'required',
@@ -96,7 +96,7 @@ class assetController extends Controller
      */
     public function show($id_asset)
     {
-        $assets = asset::find($id_asset);
+        $assets = asset::with('divisi', 'kodeProjek', 'kelasAset', 'lokasi')->find($id_asset);
 
         if(!is_null($assets)){
             return response([

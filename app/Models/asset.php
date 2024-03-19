@@ -35,4 +35,24 @@ class asset extends Model
         'no_plat_kendaraan',
         'is_luar_kota'
     ];
+
+    public function divisi()
+    {
+        return $this->belongsTo(refDivisi::class, 'id_divisi');
+    }
+
+    public function kelasAset()
+    {
+        return $this->belongsTo(refKelasAset::class, 'id_kelas_aset');
+    }
+
+    public function kodeProjek()
+    {
+        return $this->belongsTo(refKodeProjek::class, 'id_kode_projek');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo(refLokasi::class, 'id_lokasi');
+    }
 }
