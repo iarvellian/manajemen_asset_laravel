@@ -19,4 +19,14 @@ class transaksiAssetMasuk extends Model
         'tgl_masuk',
         'keterangan'
     ];
+
+    public function asset()
+    {
+        return $this->belongsTo(asset::class, 'id_asset');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
 }

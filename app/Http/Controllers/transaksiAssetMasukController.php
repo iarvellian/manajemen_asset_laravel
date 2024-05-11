@@ -14,7 +14,7 @@ class transaksiAssetMasukController extends Controller
      */
     public function index()
     {
-        $assetMasuk = transaksiAssetMasuk::all();
+        $assetMasuk = transaksiAssetMasuk::with('asset')->get();
 
         if(count($assetMasuk) > 0){
             return response([

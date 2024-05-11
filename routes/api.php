@@ -9,6 +9,7 @@ use App\Http\Controllers\refKelasAsetController;
 use App\Http\Controllers\refKodeProjekController;
 use App\Http\Controllers\refLokasiController;
 use App\Http\Controllers\refRoleController;
+use App\Http\Controllers\transaksiAsset;
 use App\Http\Controllers\transaksiAssetKeluarController;
 use App\Http\Controllers\transaksiAssetMasukController;
 use Illuminate\Http\Request;
@@ -126,6 +127,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'destroy']);
     });
 
+    // Route transaksi
+    Route::get('/transaksi_asset_masuk', [transaksiAsset::class, 'showAssetMasuk']);
+    Route::get('/transaksi_asset_keluar', [transaksiAsset::class, 'showAssetKeluar']);
+    Route::post('/transaksi_asset_masuk', [transaksiAsset::class, 'storeTransaksiAssetMasuk']);
+    Route::post('/transaksi_asset_keluar', [transaksiAsset::class, 'storeTransaksiAssetKeluar']);
+
     // Route dashboard
     Route::get('/count_role', [dashboardController::class, 'getRoleCount']);
     Route::get('/count_user', [dashboardController::class, 'getUserCount']);
@@ -134,4 +141,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/count_kode_projek', [dashboardController::class, 'getKodeProjekCount']);
     Route::get('/count_divisi', [dashboardController::class, 'getDivisiCount']);
     Route::get('/count_asset', [dashboardController::class, 'getAssetCount']);
+    Route::get('/count_asset_masuk', [dashboardController::class, 'getAssetMasukCount']);
+    Route::get('/count_asset_keluar', [dashboardController::class, 'getAssetKeluarCount']);
 });
