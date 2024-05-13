@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('transaksi_asset_keluar', function (Blueprint $table) {
             $table->foreign('id_asset')->references(['id_asset'])->on('asset');
-            $table->foreign('id')->references(['id'])->on('users');
+            $table->foreign('id_user')->references(['id'])->on('users');
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('transaksi_asset_keluar', function (Blueprint $table) {
             $table->dropForeign(['id_asset']);
-            $table->dropForeign(['id']);
+            $table->dropForeign(['id_user']);
         });
     }
 };

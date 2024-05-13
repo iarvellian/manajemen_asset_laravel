@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transaksi_asset_masuk', function (Blueprint $table) {
             $table->bigIncrements('id_transaksi_masuk');
             $table->bigInteger('id_asset')->unsigned()->index();
-            $table->bigInteger('id')->unsigned()->index();
+            $table->bigInteger('id_user')->unsigned()->index();
             $table->date('tgl_masuk');
             $table->string('keterangan');
             $table->timestamps();
