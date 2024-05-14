@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\assetController;
 use App\Http\Controllers\authController;
+use App\Http\Controllers\beritaAcaraController;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\userController;
 use App\Http\Controllers\refDivisiController;
@@ -10,8 +11,6 @@ use App\Http\Controllers\refKodeProjekController;
 use App\Http\Controllers\refLokasiController;
 use App\Http\Controllers\refRoleController;
 use App\Http\Controllers\transaksiAsset;
-use App\Http\Controllers\transaksiAssetKeluarController;
-use App\Http\Controllers\transaksiAssetMasukController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -109,29 +108,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id_asset}', [assetController::class, 'destroy']);
     });
 
-    // Route asset keluar
-    Route::prefix('assetkeluar')->group(function (){
-        Route::get('/', [transaksiAssetKeluarController::class, 'index']);
-        Route::post('/', [transaksiAssetKeluarController::class, 'store']);
-        Route::get('/{id_asset_keluar}', [transaksiAssetKeluarController::class, 'show']);
-        Route::put('/{id_asset_keluar}', [transaksiAssetKeluarController::class, 'update']);
-        Route::delete('/{id_asset_keluar}', [transaksiAssetKeluarController::class, 'destroy']);
-    });
-
-    // Route asset masuk
-    Route::prefix('assetmasuk')->group(function (){
-        Route::get('/', [transaksiAssetMasukController::class, 'index']);
-        Route::post('/', [transaksiAssetMasukController::class, 'store']);
-        Route::get('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'show']);
-        Route::put('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'update']);
-        Route::delete('/{id_asset_masuk}', [transaksiAssetMasukController::class, 'destroy']);
-    });
-
     // Route transaksi
     Route::get('/transaksi_asset_masuk', [transaksiAsset::class, 'showAssetMasuk']);
     Route::get('/transaksi_asset_keluar', [transaksiAsset::class, 'showAssetKeluar']);
     Route::post('/transaksi_asset_masuk', [transaksiAsset::class, 'storeTransaksiAssetMasuk']);
     Route::post('/transaksi_asset_keluar', [transaksiAsset::class, 'storeTransaksiAssetKeluar']);
+
+    // Route berita acara
+    Route::prefix('berita-acara')->group(function () {
+        Route::get('/', [beritaAcaraController::class, 'index']);
+        Route::post('/', [beritaAcaraController::class, 'store']);
+        Route::get('/{id_berita_acara}', [beritaAcaraController::class, 'show']);
+        Route::put('/{id_berita_acara}', [beritaAcaraController::class, 'update']);
+        Route::delete('/{id_berita_acara}', [beritaAcaraController::class, 'destroy']);
+    });
 
     // Route dashboard
     Route::get('/count_role', [dashboardController::class, 'getRoleCount']);

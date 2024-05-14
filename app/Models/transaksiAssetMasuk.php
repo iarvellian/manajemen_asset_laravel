@@ -15,7 +15,7 @@ class transaksiAssetMasuk extends Model
     protected $fillable = [
         'id_transaksi_masuk',
         'id_asset',
-        'id',
+        'id_user',
         'tgl_masuk',
         'keterangan'
     ];

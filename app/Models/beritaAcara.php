@@ -23,13 +23,16 @@ class beritaAcara extends Model
         'jabatan1',
         'jabatan2',
         'keterangan',
-        'assets',
         'gambar',
     ];
 
     protected $casts = [
         'tanggal' => 'datetime',
-        'assets' => 'json',
         'gambar' => 'json',
     ];
+
+    public function asset()
+    {
+        return $this->belongsToMany(asset::class, 'asset_berita_acara', 'berita_acara_id', 'asset_id');
+    }
 }

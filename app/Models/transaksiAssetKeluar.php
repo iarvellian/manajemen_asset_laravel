@@ -15,7 +15,7 @@ class transaksiAssetKeluar extends Model
     protected $fillable = [
         'id_transaksi_keluar',
         'id_asset',
-        'id',
+        'id_user',
         'tgl_keluar',
         'keterangan'
     ];

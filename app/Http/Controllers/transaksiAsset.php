@@ -48,7 +48,7 @@ class transaksiAsset extends Controller
         $validate  = Validator::make($request->all(), [
             'selected_assets' => 'required|array',
             'selected_assets.*.id_asset' => 'required|exists:asset,id_asset',
-            'selected_assets.*.id' => 'required|exists:users,id',
+            'selected_assets.*.id_user' => 'required|exists:users,id',
             'tgl_masuk' => '',
             'keterangan' => '',
         ]);
@@ -63,7 +63,7 @@ class transaksiAsset extends Controller
         foreach ($selectedAssets as $selectedAsset) {
             $assetMasuk = transaksiAssetMasuk::create([
                 'id_asset' => $selectedAsset['id_asset'],
-                'id' => $selectedAsset['id'],
+                'id_user' => $selectedAsset['id_user'],
                 'tgl_masuk' => now(),
                 'keterangan' => "Asset Dikembalikan"
             ]);
@@ -83,7 +83,7 @@ class transaksiAsset extends Controller
         $validate  = Validator::make($request->all(), [
             'selected_assets' => 'required|array',
             'selected_assets.*.id_asset' => 'required|exists:asset,id_asset',
-            'selected_assets.*.id' => 'required|exists:users,id',
+            'selected_assets.*.id_user' => 'required|exists:users,id',
             'tgl_keluar' => '',
             'keterangan' => '',
         ]);
@@ -98,7 +98,7 @@ class transaksiAsset extends Controller
         foreach ($selectedAssets as $selectedAsset) {
             $assetKeluar = transaksiAssetKeluar::create([
                 'id_asset' => $selectedAsset['id_asset'],
-                'id' => $selectedAsset['id'],
+                'id_user' => $selectedAsset['id_user'],
                 'tgl_keluar' => now(),
                 'keterangan' => "Asset Dipinjam"
             ]);

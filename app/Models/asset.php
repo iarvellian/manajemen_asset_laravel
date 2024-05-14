@@ -55,4 +55,9 @@ class asset extends Model
     {
         return $this->belongsTo(refLokasi::class, 'id_lokasi');
     }
+
+    public function beritaAcara()
+    {
+        return $this->belongsToMany(beritaAcara::class, 'asset_berita_acara', 'asset_id', 'berita_acara_id');
+    }
 }
