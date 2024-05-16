@@ -8,6 +8,7 @@ use App\Models\transaksiAssetMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class assetController extends Controller
 {
@@ -36,8 +37,16 @@ class assetController extends Controller
      */
     public function store(Request $request)
     {
+        $customAttributes = [
+            'id_divisi' => 'divisi',
+            'id_lokasi' => 'lokasi',
+            'id_kelas_aset' => 'kelas aset',
+            'id_kode_projek' => 'kode projek',
+            'thn_perolehan' => 'tahun perolehan',
+        ];
+
         $storeData = $request->all();
-        $validate  = Validator::make($request->all(), [
+        $validate  = Validator::make($storeData, [
             'id_divisi' => 'required|exists:ref_divisi,id_divisi',
             'id_lokasi' => 'required|exists:ref_lokasi,id_lokasi',
             'id_kelas_aset' => 'required|exists:ref_kelas_aset,id_kelas_aset',
@@ -57,50 +66,60 @@ class assetController extends Controller
             'no_rangka_kendaraan' => 'required',
             'no_mesin_kendaraan' => 'required',
             'no_plat_kendaraan' => 'required',
-        ]);
+        ], [], $customAttributes);
 
         if ($validate->fails()) {
             return response()->json($validate->errors(), 400);
         }
 
-        $user = Auth::user();
+        DB::beginTransaction();
 
-        $assets = asset::create([
-            'id_divisi' => $request->id_divisi,
-            'id_lokasi' => $request->id_lokasi,
-            'id_kelas_aset' => $request->id_kelas_aset,
-            'id_kode_projek' => $request->id_kode_projek,
-            'is_luar_kota' => $request->is_luar_kota,
-            'thn_perolehan' => $request->thn_perolehan,
-            'cost_center' => "BPN",
-            'ue' => $request->ue,
-            'kode_aset' => $request->kode_aset,
-            'nama_aset' => $request->nama_aset,
-            'jumlah_sap' => $request->jumlah_sap,
-            'jumlah_fisik' => $request->jumlah_fisik,
-            'kondisi' => $request->kondisi,
-            'pic_aset' => "M Syahrul",
-            'pic_project' => $user->nama_pegawai,
-            'serial_number' => $request->serial_number,
-            'no_rangka_kendaraan' => $request->no_rangka_kendaraan,
-            'no_mesin_kendaraan' => $request->no_mesin_kendaraan,
-            'no_plat_kendaraan' => $request->no_plat_kendaraan,
-        ]);
+        try {
+            $user = Auth::user();
 
-        $assetMasuk = transaksiAssetMasuk::create([
-            'id_asset' => $assets->id_asset,
-            'id' => $user->id,
-            'tgl_masuk' => now(),
-            'keterangan' => 'New Asset In',
-        ]);
+            $assets = asset::create([
+                'id_divisi' => $request->id_divisi,
+                'id_lokasi' => $request->id_lokasi,
+                'id_kelas_aset' => $request->id_kelas_aset,
+                'id_kode_projek' => $request->id_kode_projek,
+                'is_luar_kota' => $request->is_luar_kota,
+                'thn_perolehan' => $request->thn_perolehan,
+                'cost_center' => "BPN",
+                'ue' => $request->ue,
+                'kode_aset' => $request->kode_aset,
+                'nama_aset' => $request->nama_aset,
+                'jumlah_sap' => $request->jumlah_sap,
+                'jumlah_fisik' => $request->jumlah_fisik,
+                'kondisi' => $request->kondisi,
+                'pic_aset' => "M Syahrul",
+                'pic_project' => $user->nama_pegawai,
+                'serial_number' => $request->serial_number,
+                'no_rangka_kendaraan' => $request->no_rangka_kendaraan,
+                'no_mesin_kendaraan' => $request->no_mesin_kendaraan,
+                'no_plat_kendaraan' => $request->no_plat_kendaraan,
+            ]);
 
-        $storeData = asset::latest()->first();
+            $assetMasuk = transaksiAssetMasuk::create([
+                'id_asset' => $assets->id_asset,
+                'id_user' => $user->id,
+                'tgl_masuk' => now(),
+                'keterangan' => 'New Asset In',
+            ]);
 
-        return response([
-            'message' => 'Add Asset Success',
-            'data' => $assets,
-            'transaction_data' => $assetMasuk,
-        ], 200);
+            DB::commit();
+
+            return response([
+                'message' => 'Add Asset Success',
+                'data' => $assets,
+                'transaction_data' => $assetMasuk,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response([
+                'message' => 'Add Asset Failed!',
+                'error' => $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**

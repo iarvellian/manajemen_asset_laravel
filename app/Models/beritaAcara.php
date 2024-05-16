@@ -31,8 +31,8 @@ class beritaAcara extends Model
         'gambar' => 'json',
     ];
 
-    public function asset()
+    public function assets()
     {
-        return $this->belongsToMany(asset::class, 'asset_berita_acara', 'berita_acara_id', 'asset_id');
+        return $this->belongsToMany(asset::class, 'asset_berita_acara', 'id_berita_acara', 'id_asset');
     }
 }

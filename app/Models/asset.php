@@ -16,13 +16,13 @@ class asset extends Model
         'id_asset',
         'id_divisi',
         'id_lokasi',
-        'id_kelas_aset', 
+        'id_kelas_aset',
         'id_kode_projek',
         'is_luar_kota',
         'thn_perolehan',
         'cost_center',
         'ue',
-        'kode_aset', 
+        'kode_aset',
         'nama_aset',
         'jumlah_sap',
         'jumlah_fisik',
@@ -30,7 +30,7 @@ class asset extends Model
         'pic_aset',
         'pic_project',
         'serial_number',
-        'no_rangka_kendaraan', 
+        'no_rangka_kendaraan',
         'no_mesin_kendaraan',
         'no_plat_kendaraan',
         'is_luar_kota'
@@ -54,10 +54,5 @@ class asset extends Model
     public function lokasi()
     {
         return $this->belongsTo(refLokasi::class, 'id_lokasi');
-    }
-
-    public function beritaAcara()
-    {
-        return $this->belongsToMany(beritaAcara::class, 'asset_berita_acara', 'asset_id', 'berita_acara_id');
     }
 }

@@ -10,7 +10,7 @@ use App\Http\Controllers\refKelasAsetController;
 use App\Http\Controllers\refKodeProjekController;
 use App\Http\Controllers\refLokasiController;
 use App\Http\Controllers\refRoleController;
-use App\Http\Controllers\transaksiAsset;
+use App\Http\Controllers\transaksiAssetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -109,13 +109,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Route transaksi
-    Route::get('/transaksi_asset_masuk', [transaksiAsset::class, 'showAssetMasuk']);
-    Route::get('/transaksi_asset_keluar', [transaksiAsset::class, 'showAssetKeluar']);
-    Route::post('/transaksi_asset_masuk', [transaksiAsset::class, 'storeTransaksiAssetMasuk']);
-    Route::post('/transaksi_asset_keluar', [transaksiAsset::class, 'storeTransaksiAssetKeluar']);
+    Route::get('/transaksi_asset_masuk', [transaksiAssetController::class, 'showAssetMasuk']);
+    Route::get('/transaksi_asset_keluar', [transaksiAssetController::class, 'showAssetKeluar']);
+    Route::post('/transaksi_asset_masuk', [transaksiAssetController::class, 'storeTransaksiAssetMasuk']);
+    Route::post('/transaksi_asset_keluar', [transaksiAssetController::class, 'storeTransaksiAssetKeluar']);
 
     // Route berita acara
-    Route::prefix('berita-acara')->group(function () {
+    Route::prefix('berita_acara')->group(function () {
         Route::get('/', [beritaAcaraController::class, 'index']);
         Route::post('/', [beritaAcaraController::class, 'store']);
         Route::get('/{id_berita_acara}', [beritaAcaraController::class, 'show']);

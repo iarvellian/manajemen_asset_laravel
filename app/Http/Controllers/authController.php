@@ -17,13 +17,17 @@ class authController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
 
+            $customAttributes = [
+                'id_role' => 'role',
+            ];
+
             $validate = Validator::make($request->all(), [
                 'nama_pegawai' => 'required|string|max:255',
                 'jabatan' => 'required|string',
                 'username' => 'required|string|max:255|unique:users',
                 'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])/', 'confirmed'],
                 'id_role' => 'required|exists:ref_role,id_role',
-            ]);
+            ], [], $customAttributes);
 
             if($validate->fails()){
                 return response()->json($validate->errors(), 400);       
