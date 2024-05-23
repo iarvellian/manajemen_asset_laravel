@@ -18,13 +18,11 @@ return new class extends Migration
             $table->string('perihal');
             $table->string('lokasi');
             $table->dateTime('tgl_cetak');
-            $table->string('pihak1');
-            $table->string('pihak2');
-            $table->string('jabatan1');
-            $table->string('jabatan2');
+            $table->string('pihak_pertama');
+            $table->string('pihak_kedua');
+            $table->string('jabatan_pertama');
+            $table->string('jabatan_kedua');
             $table->text('keterangan')->nullable();
-            $table->json('assets')->nullable();
-            $table->json('gambar')->nullable();
             $table->timestamps();
         });
     }
