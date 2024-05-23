@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asset_berita_acara', function (Blueprint $table) {
+        Schema::create('asset_berita_acara_link', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_berita_acara')->unsigned()->index();
             $table->bigInteger('id_asset')->unsigned()->index();
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asset_berita_acara');
+        Schema::dropIfExists('asset_berita_acara_link');
     }
 };
