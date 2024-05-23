@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transaksi_asset_keluar', function (Blueprint $table) {
-            $table->foreign('id_asset')->references(['id_asset'])->on('asset');
-            $table->foreign('id_user')->references(['id'])->on('users');
+            $table->foreign('id_asset')->references(['id_asset'])->on('asset')->onDelete('cascade');
+            $table->foreign('id_user')->references(['id'])->on('users')->onDelete('cascade');
         });
     }
 

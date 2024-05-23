@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('asset_berita_acara', function (Blueprint $table) {
-            $table->foreign('id_berita_acara')->references(['id_berita_acara'])->on('berita_acara');
-            $table->foreign('id_asset')->references(['id_asset'])->on('asset');
+        Schema::table('asset_berita_acara_link', function (Blueprint $table) {
+            $table->foreign('id_berita_acara')->references(['id_berita_acara'])->on('berita_acara')->onDelete('cascade');
+            $table->foreign('id_asset')->references(['id_asset'])->on('asset')->onDelete('cascade');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('asset_berita_acara', function (Blueprint $table) {
+        Schema::table('asset_berita_acara_link', function (Blueprint $table) {
             $table->dropForeign(['id_berita_acara']);
             $table->dropForeign(['id_asset']);
         });
