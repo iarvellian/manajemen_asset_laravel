@@ -121,6 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id_berita_acara}', [beritaAcaraController::class, 'show']);
         Route::put('/{id_berita_acara}', [beritaAcaraController::class, 'update']);
         Route::delete('/{id_berita_acara}', [beritaAcaraController::class, 'destroy']);
+        Route::get('/cetak/{id_berita_acara}', [beritaAcaraController::class, 'generatePdf']);
     });
 
     // Route dashboard
