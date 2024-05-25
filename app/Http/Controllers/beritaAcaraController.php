@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\beritaAcaraGambar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use FPDF;
+use setasign\Fpdi\Fpdi;
 
 class beritaAcaraController extends Controller
 {
@@ -54,11 +54,11 @@ class beritaAcaraController extends Controller
             'gambar' => 'nullable|array',
             'gambar.*' => 'mimes:jpeg,jpg,png,bmp,gif,svg,webp|max:2048',
         ];
-    
+
         if ($request->jenis === 'rusak') {
             $rules['gambar'] = 'required|array';
         }
-    
+
         $validate = Validator::make($storeData, $rules);
 
         if($validate->fails()) {
@@ -93,12 +93,14 @@ class beritaAcaraController extends Controller
             }
         }
 
-        $storeData = beritaAcara::with('assets', 'images')->latest()->first();
+        $berita_acara = beritaAcara::with('assets', 'images')->find($berita_acara->id_berita_acara);
 
-        return response([
-            'message' => 'Add Berita Acara Success',
-            'data' => $storeData
-        ], 200);
+        // Generate the PDF
+        $pdfContent = $this->generatePdf($berita_acara);
+
+        return response($pdfContent, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="berita_acara.pdf"');
     }
 
     /**
@@ -205,58 +207,192 @@ class beritaAcaraController extends Controller
         ], 400);
     }
 
-    public function generatePdf($id_berita_acara)
+    public function generatePdf($berita_acara)
     {
-        $berita_acara = beritaAcara::with('assets')->find($id_berita_acara);
-
-        if (is_null($berita_acara)) {
-            return response([
-                'message' => 'Berita Acara Not Found',
-                'data' => null
-            ], 404);
-        }
-
-        // Create instance of FPDF
-        $pdf = new FPDF();
+        $pdf = new Fpdi();
         $pdf->AddPage();
 
-        // Set font
+        // Set font and add content based on jenis
+        if ($berita_acara->jenis === 'rusak') {
+            $this->pdfRusak($pdf, $berita_acara);
+        } else {
+            $this->pdfKeluarMasuk($pdf, $berita_acara);
+        }
+
+        return $pdf->Output('S');
+    }
+
+    private function pdfRusak($pdf, $berita_acara)
+    {
+        // Use the template
+        $pdf->setSourceFile(storage_path('app/public/templates/KOP_Baru.pdf'));
+        $templateId = $pdf->importPage(1);
+        $pdf->useTemplate($templateId, 10, 10, 190);
+
+        // Title
         $pdf->SetFont('Arial', 'B', 16);
-        $pdf->Cell(0, 10, 'Berita Acara Details', 0, 1, 'C');
+        $pdf->Cell(0, 10, 'BERITA ACARA ASSET RUSAK', 0, 1, 'C');
 
-        // Add data to the PDF
+        // Nomor
         $pdf->SetFont('Arial', '', 12);
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Nomor Berita Acara: ' . $berita_acara->nomor_berita_acara);
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Perihal: ' . $berita_acara->perihal);
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Lokasi: ' . $berita_acara->lokasi);
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Tanggal Cetak: ' . $berita_acara->tgl_cetak);
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Pihak 1: ' . $berita_acara->pihak1 . ' (' . $berita_acara->jabatan1 . ')');
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Pihak 2: ' . $berita_acara->pihak2 . ' (' . $berita_acara->jabatan2 . ')');
-        $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Keterangan: ' . $berita_acara->keterangan);
+        $pdf->Cell(0, 10, 'Nomor: ' . $berita_acara->nomor_berita_acara, 0, 1, 'C');
+
+        // Perihal
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(0, 10, 'Perihal: ' . $berita_acara->perihal, 0, 1, 'C');
         $pdf->Ln(10);
 
-        if ($berita_acara->assets->isNotEmpty()) {
+        // Keterangan
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->MultiCell(0, 10, $berita_acara->keterangan);
+        $pdf->Ln(10);
+
+        // Table header
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(90, 10, 'Nama Aset', 1);
+        $pdf->Cell(90, 10, 'Jumlah', 1);
+        $pdf->Ln();
+
+        // Table content
+        $pdf->SetFont('Arial', '', 12);
+        foreach ($berita_acara->assets as $asset) {
+            $pdf->Cell(90, 10, $asset->nama_aset, 1);
+            $pdf->Cell(90, 10, $asset->jumlah_fisik, 1);
+            $pdf->Ln();
+        }
+        $pdf->Ln(10);
+
+        // Final text
+        $pdf->MultiCell(0, 10, 'Demikian Berita Acara ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.');
+        $pdf->Ln(20);
+
+        // Signatures
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(60, 10, 'Pihak Pertama:', 0, 0, 'L');
+        $pdf->Cell(60, 10, 'Pihak Kedua:', 0, 0, 'R');
+        $pdf->Cell(0, 10, '', 0, 1); // Empty cell for spacing
+        $pdf->Ln(20);
+        $pdf->Cell(60, 10, $berita_acara->pihak_pertama, 0, 0, 'L');
+        $pdf->Cell(60, 10, $berita_acara->pihak_kedua, 0, 0, 'R');
+        $pdf->Ln(5);
+        $pdf->Cell(60, 10, $berita_acara->jabatan_pertama, 0, 0, 'L');
+        $pdf->Cell(60, 10, $berita_acara->jabatan_kedua, 0, 0, 'R');
+        $pdf->Ln(20);
+        $pdf->Cell(0, 10, 'Pihak Ketiga:', 0, 1, 'C');
+        $pdf->Ln(20);
+        $pdf->Cell(0, 10, '$berita_acara->pihak_ketiga', 0, 1, 'C');
+        $pdf->Ln(5);
+        $pdf->Cell(0, 10, '$berita_acara->jabatan_ketiga', 0, 1, 'C');
+
+        // New page for lampiran
+        $pdf->AddPage();
+
+        // Title for lampiran
+        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->Cell(0, 10, 'LAMPIRAN', 0, 1, 'C');
+
+        // Nomor
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(0, 10, 'Nomor: ' . $berita_acara->nomor_berita_acara, 0, 1, 'C');
+
+        // Description
+        $pdf->Cell(0, 10, '(Foto barang yang rusak)', 0, 1, 'C');
+
+        // Photos
+        if ($berita_acara->images->isNotEmpty()) {
             $pdf->Ln(10);
             $pdf->SetFont('Arial', 'B', 14);
-            $pdf->Cell(40, 10, 'Assets:', 0, 1);
+            $pdf->Cell(40, 10, 'Images:', 0, 1);
             $pdf->SetFont('Arial', '', 12);
 
-            foreach ($berita_acara->assets as $asset) {
-                $pdf->Cell(40, 10, '- ' . $asset->nama_aset);
+            foreach ($berita_acara->images as $image) {
+                $pdf->Image(storage_path('app/' . $image->path), null, null, 150);
                 $pdf->Ln(10);
             }
         }
+    }
 
-        // Output the PDF
-        return response($pdf->Output('S'), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="berita_acara.pdf"');
+    private function pdfKeluarMasuk($pdf, $berita_acara)
+    {
+        // Title
+        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->Cell(0, 10, 'BERITA ACARA KELUAR / MASUK BARANG GUDANG', 0, 1, 'C');
+        $pdf->Ln(5);
+
+        // Details section
+        $pdf->SetFont('Arial', '', 12);
+        $details = [
+            'Nomor' => $berita_acara->nomor_berita_acara,
+            'Perihal' => $berita_acara->perihal,
+            'Lokasi' => $berita_acara->lokasi,
+            'Hari/Tanggal' => $berita_acara->tgl_cetak,
+        ];
+
+        foreach ($details as $label => $value) {
+            $pdf->Cell(40, 10, $label . ' : ', 0, 0);
+            $pdf->Cell(0, 10, $value, 0, 1);
+        }
+        $pdf->Ln(5);
+
+        // Divider
+        $pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
+        $pdf->Ln(5);
+
+        // Pihak Pertama
+        $pdf->Cell(0, 10, 'Yang bertanda tangan di Bawah ini:', 0, 1);
+        $pdf->Cell(40, 10, 'Nama : ', 0, 0);
+        $pdf->Cell(0, 10, $berita_acara->pihak_pertama, 0, 1);
+        $pdf->Cell(40, 10, 'Jabatan : ', 0, 0);
+        $pdf->Cell(0, 10, $berita_acara->jabatan_pertama, 0, 1);
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(0, 10, 'Dalam hal ini disebut sebagai pihak Pertama', 0, 1);
+        $pdf->Ln(5);
+
+        // Pihak Kedua
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(40, 10, 'Nama : ', 0, 0);
+        $pdf->Cell(0, 10, $berita_acara->pihak_kedua, 0, 1);
+        $pdf->Cell(40, 10, 'Jabatan : ', 0, 0);
+        $pdf->Cell(0, 10, $berita_acara->jabatan_kedua, 0, 1);
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(0, 10, 'Dalam hal ini disebut sebagai pihak Kedua', 0, 1);
+        $pdf->Ln(5);
+
+        // Menerangkan text
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->MultiCell(0, 10, 'Dengan ini menerangkan bahwa Pihak Pertama telah melakukan pengambilan barang Operasional ICT berupa:');
+        $pdf->Ln(5);
+
+        // Table header
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(60, 10, 'Nama Aset', 1);
+        $pdf->Cell(60, 10, 'Serial Number', 1);
+        $pdf->Cell(60, 10, 'Kondisi', 1);
+        $pdf->Ln();
+
+        // Table content
+        $pdf->SetFont('Arial', '', 12);
+        foreach ($berita_acara->assets as $asset) {
+            $pdf->Cell(60, 10, $asset->nama_aset, 1);
+            $pdf->Cell(60, 10, $asset->serial_number, 1);
+            $pdf->Cell(60, 10, $asset->kondisi, 1);
+            $pdf->Ln();
+        }
+        $pdf->Ln(10);
+
+        // Final text
+        $pdf->MultiCell(0, 10, 'Demikian Berita Acara ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.');
+        $pdf->Ln(20);
+
+        // Signatures
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(90, 10, 'Pihak Pertama:', 0, 0, 'L');
+        $pdf->Cell(0, 10, 'Pihak Kedua:', 0, 1, 'R');
+        $pdf->Ln(20);
+        $pdf->Cell(90, 10, $berita_acara->pihak_pertama, 0, 0, 'L');
+        $pdf->Cell(0, 10, $berita_acara->pihak_kedua, 0, 1, 'R');
+        $pdf->Ln(5);
+        $pdf->Cell(90, 10, $berita_acara->jabatan_pertama, 0, 0, 'L');
+        $pdf->Cell(0, 10, $berita_acara->jabatan_kedua, 0, 1, 'R');
     }
 }
