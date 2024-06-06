@@ -81,6 +81,7 @@ class authController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'token_type'   => 'Bearer',
+                'role'         => $user->role->nama_role
             ]);
 
         } catch (\Throwable $th) {
@@ -110,7 +111,7 @@ class authController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
+                'nama_pegawai' => 'required|string|max:255',
                 'jabatan' => 'required|string',
                 'username' => 'required|string|max:255|unique:users,username,'.$request->user()->id,
                 'password' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])/', 'confirmed'],
@@ -120,7 +121,7 @@ class authController extends Controller
                 return response()->json($validate->errors(), 400);       
             }
 
-            $userData = $request->only('name', 'jabatan', 'username');
+            $userData = $request->only('nama_pegawai', 'jabatan', 'username');
 
             if ($request->filled('password')) {
                 $userData['password'] = Hash::make($request->password);
@@ -128,7 +129,9 @@ class authController extends Controller
 
             $request->user()->update($userData);
 
-            return response()->json($request->user);
+            $updatedUser = $request->user();
+
+            return response()->json($updatedUser);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Something went wrong',

@@ -28,25 +28,10 @@ use Illuminate\Support\Facades\Route;
 // Authentication routes
 Route::post('/login', [authController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
+// Superadmin routes
+Route::middleware(['auth:sanctum', 'role:superadmin'])->group(function () {
     // Route registered user
     Route::post('/register', [authController::class, 'register']);
-
-    // Route logout
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-    // Route profile
-    Route::prefix('profile')->group(function () {
-        Route::get('/', [AuthController::class, 'profile']);
-        Route::post('/', [AuthController::class, 'updateProfile']);
-    });
-
-    // Route log aktivitas
-    Route::get('/log_aktivitas', [userController::class, 'logActivity']);
 
     // Route users
     Route::prefix('users')->group(function (){
@@ -98,6 +83,25 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id_lokasi}', [refLokasiController::class, 'update']);
         Route::delete('/{id_lokasi}', [refLokasiController::class, 'destroy']);
     });
+});
+
+// Superadmin and Admin routes
+Route::middleware(['auth:sanctum', 'role:superadmin,admin'])->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Route logout
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Route profile
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [AuthController::class, 'profile']);
+        Route::put('/', [AuthController::class, 'updateProfile']);
+    });
+
+    // Route log aktivitas
+    Route::get('/log_aktivitas', [userController::class, 'logActivity']);
 
     // Route asset
     Route::prefix('asset')->group(function (){
