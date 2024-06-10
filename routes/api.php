@@ -103,6 +103,12 @@ Route::middleware(['auth:sanctum', 'role:superadmin,admin'])->group(function () 
     // Route log aktivitas
     Route::get('/log_aktivitas', [userController::class, 'logActivity']);
 
+    // Route fetch data
+    Route::get('/divisi', [refDivisiController::class, 'index']);
+    Route::get('/kelas_aset', [refKelasAsetController::class, 'index']);
+    Route::get('/kode_projek', [refKodeProjekController::class, 'index']);
+    Route::get('/lokasi', [refLokasiController::class, 'index']);
+
     // Route asset
     Route::prefix('asset')->group(function (){
         Route::get('/', [assetController::class, 'index']);
@@ -123,19 +129,9 @@ Route::middleware(['auth:sanctum', 'role:superadmin,admin'])->group(function () 
         Route::get('/', [beritaAcaraController::class, 'index']);
         Route::post('/', [beritaAcaraController::class, 'store']);
         Route::get('/{id_berita_acara}', [beritaAcaraController::class, 'show']);
-        Route::put('/{id_berita_acara}', [beritaAcaraController::class, 'update']);
-        Route::delete('/{id_berita_acara}', [beritaAcaraController::class, 'destroy']);
         Route::get('/cetak/{id_berita_acara}', [beritaAcaraController::class, 'generatePdf']);
     });
 
     // Route dashboard
-    Route::get('/count_role', [dashboardController::class, 'getRoleCount']);
-    Route::get('/count_user', [dashboardController::class, 'getUserCount']);
-    Route::get('/count_lokasi', [dashboardController::class, 'getLokasiCount']);
-    Route::get('/count_kelas_aset', [dashboardController::class, 'getKelasAsetCount']);
-    Route::get('/count_kode_projek', [dashboardController::class, 'getKodeProjekCount']);
-    Route::get('/count_divisi', [dashboardController::class, 'getDivisiCount']);
-    Route::get('/count_asset', [dashboardController::class, 'getAssetCount']);
-    Route::get('/count_asset_masuk', [dashboardController::class, 'getAssetMasukCount']);
-    Route::get('/count_asset_keluar', [dashboardController::class, 'getAssetKeluarCount']);
+    Route::get('/counts', [dashboardController::class, 'getAllCounts']);
 });
