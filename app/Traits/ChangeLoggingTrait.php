@@ -57,7 +57,7 @@ trait ChangeLoggingTrait
             'nama_tabel' => $model->getTable(),
             'aksi' => $action,
             'data_lama' => ($action === 'deleted') ? $jsonData : $arrayOriginalData,
-            'data_baru' => ($action === 'created' || $action === 'updated') ? $jsonData : null,
+            'data_baru' => ($action === 'created' || $action === 'updated') ? $jsonData : json_encode([]),
             'user_id' => auth()->id(),
         ]);
     }
