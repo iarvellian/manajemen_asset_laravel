@@ -103,7 +103,7 @@ class assetController extends Controller
                 'id_asset' => $assets->id_asset,
                 'id_user' => $user->id,
                 'tgl_masuk' => now(),
-                'keterangan' => 'New Asset In',
+                'keterangan' => 'Aset Baru Masuk',
             ]);
 
             DB::commit();
