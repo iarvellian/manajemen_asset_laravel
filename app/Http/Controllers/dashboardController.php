@@ -14,56 +14,20 @@ use App\Models\User;
 
 class dashboardController extends Controller
 {
-    public function getRoleCount()
+    public function getAllCounts()
     {
-        $count = refRole::count();
-        return response()->json(['count' => $count]);
-    }
+        $counts = [
+            'role_count' => refRole::count(),
+            'user_count' => User::count(),
+            'lokasi_count' => refLokasi::count(),
+            'kelas_aset_count' => refKelasAset::count(),
+            'kode_projek_count' => refKodeProjek::count(),
+            'divisi_count' => refDivisi::count(),
+            'asset_count' => asset::count(),
+            'asset_masuk_count' => transaksiAssetMasuk::count(),
+            'asset_keluar_count' => transaksiAssetKeluar::count(),
+        ];
 
-    public function getUserCount()
-    {
-        $count = User::count();
-        return response()->json(['count' => $count]);
-    }
-
-    public function getLokasiCount()
-    {
-        $count = refLokasi::count();
-        return response()->json(['count' => $count]);
-    }
-
-    public function getKelasAsetCount()
-    {
-        $count = refKelasAset::count(); 
-        return response()->json(['count' => $count]);
-    }
-
-    public function getKodeProjekCount()
-    {
-        $count = refKodeProjek::count();
-        return response()->json(['count' => $count]);
-    }
-
-    public function getDivisiCount()
-    {
-        $count = refDivisi::count();
-        return response()->json(['count' => $count]);
-    }
-
-    public function getAssetCount()
-    {
-        $count = asset::count();
-        return response()->json(['count' => $count]);
-    }
-
-    public function getAssetMasukCount()
-    {
-        $count = transaksiAssetMasuk::count();
-        return response()->json(['count' => $count]);
-    }
-    public function getAssetKeluarCount()
-    {
-        $count = transaksiAssetKeluar::count();
-        return response()->json(['count' => $count]);
+        return response()->json($counts);
     }
 }
