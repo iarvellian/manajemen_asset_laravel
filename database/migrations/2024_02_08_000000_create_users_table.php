@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('nama_pegawai');
             $table->string('jabatan');
             $table->string('username')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
