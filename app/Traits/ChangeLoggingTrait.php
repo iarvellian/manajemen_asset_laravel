@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Models\ChangeLogs;
+use App\Models\changeLogs;
 
 trait ChangeLoggingTrait
 {
