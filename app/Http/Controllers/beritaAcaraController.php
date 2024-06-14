@@ -149,7 +149,7 @@ class beritaAcaraController extends Controller
                 foreach ($storeData['assets'] as $assetId) {
                     $asset = asset::find($assetId);
                     if ($asset) {
-                        $asset->kondisi = 'rusak';
+                        $asset->kondisi = 'Rusak';
                         $asset->save();
                     }
                 }
@@ -200,7 +200,8 @@ class beritaAcaraController extends Controller
     public function generatePdf($berita_acara, $tgl_cetak_formatted)
     {
         $pdf = new Fpdi();
-        $pdf->AddPage();
+        // Set the PDF to A4 size layout
+        $pdf->AddPage('P', 'A4');
 
         // Set font and add content based on jenis
         if ($berita_acara->jenis === 'rusak') {
@@ -219,15 +220,12 @@ class beritaAcaraController extends Controller
         $pdf->setSourceFile($templatePath);
         $templateId = $pdf->importPage(1);
 
-        // Set the PDF to A4 size layout
-        $pdf->AddPage('P', 'A4');
-
         // Use the template on the first page
         $pdf->useTemplate($templateId, 0, 0, 210);
         $pdf->Ln(20);
 
         // Title
-        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->SetFont('Arial', 'BU', 16);
         $pdf->Cell(0, 6, 'BERITA ACARA', 0, 1, 'C');
 
         // Nomor
@@ -246,11 +244,11 @@ class beritaAcaraController extends Controller
 
         // Table header
         $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(10, 6, 'No', 1);
-        $pdf->Cell(45, 6, 'Nama Aset', 1);
-        $pdf->Cell(45, 6, 'Jumlah', 1);
-        $pdf->Cell(45, 6, 'S/N', 1);
-        $pdf->Cell(45, 6, 'Barcode', 1);
+        $pdf->Cell(10, 6, 'No', 1, 0, 'C');
+        $pdf->Cell(45, 6, 'Nama Aset', 1, 0, 'C');
+        $pdf->Cell(45, 6, 'Jumlah', 1, 0, 'C');
+        $pdf->Cell(45, 6, 'S/N', 1, 0, 'C');
+        $pdf->Cell(45, 6, 'Barcode', 1, 0, 'C');
         $pdf->Ln();
 
         // Table content
@@ -260,7 +258,7 @@ class beritaAcaraController extends Controller
             $pdf->Cell(45, 6, $asset->nama_aset, 1);
             $pdf->Cell(45, 6, $asset->jumlah_fisik, 1);
             $pdf->Cell(45, 6, $asset->serial_number, 1);
-            $pdf->Cell(45, 6, 'barcode', 1);
+            $pdf->Cell(45, 6, '-', 1);
             $pdf->Ln();
         }
         $pdf->Ln(8); // Adjusted for tighter spacing
@@ -273,7 +271,7 @@ class beritaAcaraController extends Controller
         $pdf->SetFont('Arial', '', 12);
         $pdf->SetX(-105); // Move to the appropriate position
         $pdf->Cell(90, 10, 'Balikpapan, ' . $tgl_cetak_formatted, 0, 0, 'C');
-        $pdf->Ln(5);
+        $pdf->Ln(10);
         $pdf->SetX(40); // Move slightly to the right
         $pdf->Cell(90, 10, 'Dibuat Oleh,', 0, 0, 'L');
         $pdf->SetX(-75); // Move slightly to the left
@@ -281,17 +279,21 @@ class beritaAcaraController extends Controller
         $pdf->Ln(30);
 
         // Adjusted position for Pihak Pertama
+        $pdf->SetFont('Arial', 'BU', 12); // Set font to bold for pihak pertama
         $pdf->SetX(7); // Move slightly to the right
         $pdf->Cell(90, 10, $berita_acara->pihak_pertama, 0, 0, 'C');
         $pdf->Ln(5);
+        $pdf->SetFont('Arial', '', 12); // Revert font to regular for jabatan pertama
         $pdf->SetX(7); // Move slightly to the right
         $pdf->Cell(90, 10, $berita_acara->jabatan_pertama, 0, 0, 'C');
 
         // Adjusted position for Pihak Kedua
+        $pdf->SetFont('Arial', 'BU', 12); // Revert font to regular for jabatan pertama
         $pdf->SetY($pdf->GetY() - 5); // Set the same height as Pihak Pertama
         $pdf->SetX(-105); // Move slightly to the left
         $pdf->Cell(90, 10, "Muchammad Abdul Muiz", 0, 0, 'C');
         $pdf->Ln(5);
+        $pdf->SetFont('Arial', '', 12); // Revert font to regular for jabatan pertama
         $pdf->SetX(-105); // Move slightly to the left
         $pdf->Cell(90, 10, 'Staff Equipment & Technology', 0, 0, 'C');
 
@@ -299,7 +301,9 @@ class beritaAcaraController extends Controller
 
         $pdf->Cell(0, 10, 'Disetujui Oleh,', 0, 1, 'C');
         $pdf->Ln(20); // Adjusted for tighter spacing
+        $pdf->SetFont('Arial', 'BU', 12); // Revert font to regular for jabatan pertama
         $pdf->Cell(0, 5, 'Syamsul Maarif', 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 12); // Revert font to regular for jabatan pertama
         $pdf->Cell(0, 5, 'Non Account Management', 0, 1, 'C');
 
         // New page for lampiran
@@ -321,8 +325,10 @@ class beritaAcaraController extends Controller
         $pdf->Cell(0, 8, '(Foto barang yang rusak)', 0, 1, 'L');
 
         $pdf->Ln(6); // Adjusted for tighter spacing
-        $pdf->SetFont('Arial', 'B', 14);
-        $pdf->Cell(40, 8, $berita_acara->nama_aset, 0, 1, 'C');
+        $pdf->SetFont('Arial', 'BU', 12);
+        foreach ($berita_acara->assets as $asset) {
+            $pdf->Cell(0, 8, $asset->nama_aset, 0, 1, 'C');
+        }
 
         // Photos
         if ($berita_acara->images->isNotEmpty()) {
@@ -347,7 +353,7 @@ class beritaAcaraController extends Controller
         $pdf->Ln(15);
 
         // Title
-        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->SetFont('Arial', 'BU', 16);
         $pdf->Cell(0, 10, 'BERITA ACARA KELUAR / MASUK BARANG GUDANG', 0, 1, 'C');
         $pdf->Ln(5);
 
@@ -397,10 +403,10 @@ class beritaAcaraController extends Controller
 
         // Table header
         $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(10, 8, 'No', 1);
-        $pdf->Cell(60, 8, 'Nama Aset', 1);
-        $pdf->Cell(60, 8, 'Serial Number', 1);
-        $pdf->Cell(60, 8, 'Kondisi', 1);
+        $pdf->Cell(10, 8, 'No', 1, 0, 'C');
+        $pdf->Cell(60, 8, 'Nama Aset', 1, 0, 'C');
+        $pdf->Cell(60, 8, 'Serial Number', 1, 0, 'C');
+        $pdf->Cell(60, 8, 'Kondisi', 1, 0, 'C');
         $pdf->Ln();
 
         // Table content
@@ -420,25 +426,29 @@ class beritaAcaraController extends Controller
 
         // Signatures
         $pdf->SetFont('Arial', '', 12);
-        $pdf->SetX(40); // Move slightly to the right
-        $pdf->Cell(90, 10, 'Pihak Pertama', 0, 0, 'L');
-        $pdf->SetX(-75); // Move slightly to the left
-        $pdf->Cell(90, 10, 'Pihak Kedua', 0, 0, 'L');
+        $pdf->SetX(10); // Move slightly to the right
+        $pdf->Cell(90, 10, 'Pihak Pertama', 0, 0, 'C');
+        $pdf->SetX(-110); // Move slightly to the left
+        $pdf->Cell(90, 10, 'Pihak Kedua', 0, 0, 'C');
         $pdf->Ln(30);
 
         // Adjusted position for Pihak Pertama
-        $pdf->SetX(30); // Move slightly to the right
+        $pdf->SetFont('Arial', 'U', 12);
+        $pdf->SetX(10); // Move slightly to the right
         $pdf->Cell(90, 10, $berita_acara->pihak_pertama, 0, 0, 'C');
         $pdf->Ln(5);
-        $pdf->SetX(30); // Move slightly to the right
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->SetX(10); // Move slightly to the right
         $pdf->Cell(90, 10, $berita_acara->jabatan_pertama, 0, 0, 'C');
 
         // Adjusted position for Pihak Kedua
+        $pdf->SetFont('Arial', 'U', 12);
         $pdf->SetY($pdf->GetY() - 5); // Set the same height as Pihak Pertama
-        $pdf->SetX(-85); // Move slightly to the left
+        $pdf->SetX(-110); // Move slightly to the left
         $pdf->Cell(90, 10, $berita_acara->pihak_kedua, 0, 0, 'C');
         $pdf->Ln(5);
-        $pdf->SetX(-85); // Move slightly to the left
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->SetX(-110); // Move slightly to the left
         $pdf->Cell(90, 10, $berita_acara->jabatan_kedua, 0, 0, 'C');
     }
 }
