@@ -18,10 +18,18 @@ class UsersTableSeeder extends Seeder
             [
                 'id' => 1,
                 'id_role' => 1,
-                'nama_pegawai' => 'Nama Pegawai',
-                'jabatan' => 'Jabatan',
-                'username' => 'test',
-                'password' => Hash::make('Test1234'),
+                'nama_pegawai' => 'Pegawai_1',
+                'jabatan' => 'Jabatan_1',
+                'username' => 'superadmin',
+                'password' => Hash::make('Superadmin1234'),
+            ],
+            [
+                'id' => 2,
+                'id_role' => 2,
+                'nama_pegawai' => 'Pegawai_2',
+                'jabatan' => 'Jabatan_2',
+                'username' => 'admin',
+                'password' => Hash::make('Admin1234'),
             ],
         ]);
     }
