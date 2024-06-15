@@ -216,7 +216,7 @@ class beritaAcaraController extends Controller
     private function pdfRusak($pdf, $berita_acara, $tgl_cetak_formatted)
     {
         // Load the template
-        $templatePath = storage_path('assets/templates/KOP_Baru.pdf');
+        $templatePath = resource_path('assets/templates/KOP_Baru.pdf');
         $pdf->setSourceFile($templatePath);
         $templateId = $pdf->importPage(1);
 
