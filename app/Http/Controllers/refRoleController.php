@@ -36,7 +36,7 @@ class refRoleController extends Controller
     {
         $storeData = $request->all();
         $validate  = Validator::make($storeData, [
-            'nama_role' => 'required',
+            'nama_role' => 'required|unique:ref_role',
         ]);
 
         if($validate->fails()) {
@@ -92,7 +92,7 @@ class refRoleController extends Controller
         $updateData = $request->all();
 
         $validate  = Validator::make($updateData, [
-            'nama_role' => 'required',
+            'nama_role' => 'required|unique:ref_role',
         ]);
 
         if($validate->fails()) {

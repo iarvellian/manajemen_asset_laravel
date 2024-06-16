@@ -36,7 +36,7 @@ class refKodeProjekController extends Controller
     {
         $storeData = $request->all();
         $validate  = Validator::make($storeData, [
-            'nama_kode_projek' => 'required',
+            'nama_kode_projek' => 'required|unique:ref_kode_projek',
         ]);
 
         if($validate->fails()) {
@@ -92,7 +92,7 @@ class refKodeProjekController extends Controller
         $updateData = $request->all();
 
         $validate  = Validator::make($updateData, [
-            'nama_kode_projek' => 'required',
+            'nama_kode_projek' => 'required|unique:ref_kode_projek',
         ]);
 
         if($validate->fails()) {

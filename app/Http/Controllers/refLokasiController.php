@@ -37,7 +37,7 @@ class refLokasiController extends Controller
     {
         $storeData = $request->all();
         $validate  = Validator::make($storeData, [
-            'nama_lokasi' => 'required',
+            'nama_lokasi' => 'required|unique:ref_lokasi',
         ]);
 
         if($validate->fails()) {
@@ -93,7 +93,7 @@ class refLokasiController extends Controller
         $updateData = $request->all();
 
         $validate  = Validator::make($updateData, [
-            'nama_lokasi' => 'required',
+            'nama_lokasi' => 'required|unique:ref_lokasi',
         ]);
 
         if($validate->fails()) {

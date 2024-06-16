@@ -38,7 +38,7 @@ class refDivisiController extends Controller
     {
         $storeData = $request->all();
         $validate  = Validator::make($storeData, [
-            'nama_divisi' => 'required',
+            'nama_divisi' => 'required|unique:ref_divisi',
         ]);
 
         if($validate->fails()) {
@@ -94,7 +94,7 @@ class refDivisiController extends Controller
         $updateData = $request->all();
 
         $validate  = Validator::make($updateData, [
-            'nama_divisi' => 'required',
+            'nama_divisi' => 'required|unique:ref_divisi',
         ]);
 
         if($validate->fails()) {

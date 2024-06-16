@@ -36,7 +36,7 @@ class refKelasAsetController extends Controller
     {
         $storeData = $request->all();
         $validate  = Validator::make($storeData, [
-            'nama_kelas_aset' => 'required',
+            'nama_kelas_aset' => 'required|unique:ref_kelas_aset',
         ]);
 
         if($validate->fails()) {
@@ -92,7 +92,7 @@ class refKelasAsetController extends Controller
         $updateData = $request->all();
 
         $validate  = Validator::make($updateData, [
-            'nama_kelas_aset' => 'required',
+            'nama_kelas_aset' => 'required|unique:ref_kelas_aset',
         ]);
 
         if($validate->fails()) {
