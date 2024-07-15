@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Asset;
+use App\Models\asset;
 use App\Models\refLokasi;
 use App\Models\refKelasAset;
 use App\Models\refKodeProjek;
