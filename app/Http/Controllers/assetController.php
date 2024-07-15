@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\asset;
 use App\Http\Controllers\Controller;
 use App\Models\transaksiAssetMasuk;
+use App\Imports\assetImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class assetController extends Controller
 {
@@ -229,5 +231,18 @@ class assetController extends Controller
             'message' => 'Delete Asset Failed!',
             'data' => null
         ], 400);
+    }
+
+    public function import(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        Excel::import(new assetImport, $request->file('file'));
+
+        return response([
+            'message' => 'Import  Asset Success!',
+        ], 200);
     }
 }
