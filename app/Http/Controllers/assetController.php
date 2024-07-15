@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
 class assetController extends Controller
@@ -175,7 +176,7 @@ class assetController extends Controller
             'jumlah_fisik' => 'required',
             'kondisi' => 'required',
             'pic_aset' => '',
-            'serial_number' => 'required|unique:asset',
+            'serial_number' => ['required', Rule::unique('asset', 'serial_number')->ignore($assets->id_asset, 'id_asset'),],
             'no_rangka_kendaraan' => 'required',
             'no_mesin_kendaraan' => 'required',
             'no_plat_kendaraan' => 'required',
