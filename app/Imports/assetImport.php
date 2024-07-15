@@ -7,7 +7,9 @@ use App\Models\refLokasi;
 use App\Models\refKelasAset;
 use App\Models\refKodeProjek;
 use App\Models\refDivisi;
+use App\Models\transaksiAssetMasuk;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
@@ -31,7 +33,8 @@ class assetImport implements ToModel, WithHeadingRow
         $assetClass = $this->findOrCreateAssetClass($row['Asset Class']);
         $kodeProject = $this->findOrCreateKodeProject($row['Kode Project New']);
 
-        return new Asset([
+        // Create new asset
+        $asset = new asset([
             'id_divisi' => $this->getDivisiId($row['Divisi'] ?? 'Default Divisi'),
             'id_lokasi' => $lokasi->id_lokasi,
             'id_kelas_aset' => $assetClass->id_kelas_aset,
@@ -52,6 +55,19 @@ class assetImport implements ToModel, WithHeadingRow
             'no_mesin_kendaraan' => $row['No.Mesin Kendaraan'],
             'no_plat_kendaraan' => $row['Plat Nomor Kendaraan'],
         ]);
+
+        $asset->save();
+
+        // Create new transaksiAssetMasuk
+        $user = Auth::user();
+        transaksiAssetMasuk::create([
+            'id_asset' => $asset->id_asset,
+            'id_user' => $user->id,
+            'tgl_masuk' => now(),
+            'keterangan' => 'Aset Baru Masuk',
+        ]);
+
+        return $asset;
     }
 
     /**
