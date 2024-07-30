@@ -6,6 +6,7 @@ use App\Models\asset;
 use App\Http\Controllers\Controller;
 use App\Models\transaksiAssetMasuk;
 use App\Imports\assetImport;
+use App\Exports\assetExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -240,10 +241,28 @@ class assetController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
 
-        Excel::import(new assetImport, $request->file('file'));
+        try {
+            Excel::import(new assetImport, $request->file('file'));
+            return response()->json([
+                'message' => 'Import Asset Success!',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Import Asset Failed!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
-        return response([
-            'message' => 'Import  Asset Success!',
-        ], 200);
+    public function export()
+    {
+        try {
+            return Excel::download(new assetExport, 'asset-data.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Export Asset Failed!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

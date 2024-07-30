@@ -116,8 +116,9 @@ Route::middleware(['auth:sanctum', 'role:superadmin,admin'])->group(function () 
         Route::get('/{id_asset}', [assetController::class, 'show']);
         Route::put('/{id_asset}', [assetController::class, 'update']);
         Route::delete('/{id_asset}', [assetController::class, 'destroy']);
-        Route::post('/import', [assetController::class, 'import']);
     });
+    Route::post('/asset_import', [assetController::class, 'import']);
+    Route::get('/asset_export', [assetController::class, 'export']);
 
     // Route transaksi
     Route::get('/transaksi_asset_masuk', [transaksiAssetController::class, 'showAssetMasuk']);
