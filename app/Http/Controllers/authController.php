@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class authController extends Controller
 {
@@ -24,6 +25,7 @@ class authController extends Controller
 
             $validate = Validator::make($request->all(), [
                 'nama_pegawai' => 'required|string|max:255',
+                'nik' => 'required|string',
                 'jabatan' => 'required|string',
                 'username' => ['required', 'string', 'max:255', 'unique:users', 'regex:/^\S+$/'],
                 'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])/', 'confirmed'],
@@ -116,7 +118,7 @@ class authController extends Controller
             $validate = Validator::make($request->all(), [
                 'nama_pegawai' => 'required|string|max:255',
                 'jabatan' => 'required|string',
-                'username' => 'required|string|max:255|unique:users,username,'.$request->user()->id,
+                'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($request->user()->id), 'regex:/^\S+$/'],
                 'password' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])/', 'confirmed'],
             ]);
 

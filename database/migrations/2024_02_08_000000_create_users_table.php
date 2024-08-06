@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('id_role')->unsigned()->index();
             $table->string('nama_pegawai');
+            $table->string('nik');
             $table->string('jabatan');
             $table->string('username')->unique();
             $table->string('password');
